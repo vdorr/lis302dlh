@@ -1,4 +1,8 @@
 
+//June 6 2012
+//This program is given to you without any warranty.
+//The author disclaims copyright to this source code.
+
 #include <Wire.h>
 #include <stdint.h>
 #include "lis302dlh.h"

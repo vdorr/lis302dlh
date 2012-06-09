@@ -1,4 +1,10 @@
 
+//June 6 2012
+//This program is given to you without any warranty.
+//The author disclaims copyright to this source code.
+
+//based on LIS302DLH.pdf June 2009 Doc ID 15797 Rev 1
+
 //interface
 #define I2C_ADDRESS_0	0x18
 #define I2C_ADDRESS_1	0x19
