@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "lis302dlh.h"
 
-#define ACCEL_ADDR  I2C_ADDRESS_0
+#define ACCEL_ADDR  LIS302_I2C_ADDRESS_0
 
 void setup()
 {
@@ -39,18 +39,18 @@ void loop()
 int lis320dlh_detect(uint8_t i2c_addr)
 {
   Wire.beginTransmission(i2c_addr);
-  Wire.write((uint8_t)WHO_AM_I);
+  Wire.write((uint8_t)LIS302_WHO_AM_I);
   Wire.endTransmission();
   Wire.requestFrom((uint8_t)i2c_addr, (uint8_t)1);
   if (Wire.available())
   { 
     uint8_t hello = Wire.read();
-    return hello != WHO_AM_I_VALUE;
+    return hello != LIS302_WHO_AM_I_VALUE;
   }
   return -1;
 }
 
-#define ALL_AXES_READY ((uint8_t)((1 << ZOR) | (1 << YOR) | (1 << XOR)))
+#define LIS302_ALL_AXES_READY ((uint8_t)((1 << LIS302_ZOR) | (1 << LIS302_YOR) | (1 << LIS302_XOR)))
 
 int lis320dlh_read_all(uint8_t i2c_addr, int16_t* x, int16_t* y, int16_t* z, uint8_t* st_reg_out)
 {
@@ -58,11 +58,11 @@ int lis320dlh_read_all(uint8_t i2c_addr, int16_t* x, int16_t* y, int16_t* z, uin
   do
   {
     Wire.beginTransmission(i2c_addr);
-    Wire.write((uint8_t)STATUS_REG);
+    Wire.write((uint8_t)LIS302_STATUS_REG);
     Wire.endTransmission();
     Wire.requestFrom(i2c_addr, (uint8_t)1);
     st_reg = Wire.read();
-  } while (Wire.available() && ((st_reg & ALL_AXES_READY) == ALL_AXES_READY));//TODO timeout
+  } while (Wire.available() && ((st_reg & LIS302_ALL_AXES_READY) != LIS302_ALL_AXES_READY));//TODO timeout
 
   if ( st_reg_out != NULL )
   {
@@ -70,7 +70,7 @@ int lis320dlh_read_all(uint8_t i2c_addr, int16_t* x, int16_t* y, int16_t* z, uin
   }
 
   Wire.beginTransmission(i2c_addr);
-  Wire.write((uint8_t)(0x28 | AUTO_INCREMENT));
+  Wire.write((uint8_t)(LIS302_OUT_X_L | LIS302_AUTO_INCREMENT));
   Wire.endTransmission();
   Wire.requestFrom(i2c_addr, (uint8_t)6);
 
@@ -92,11 +92,11 @@ int lis320dlh_read_all(uint8_t i2c_addr, int16_t* x, int16_t* y, int16_t* z, uin
 int lis320dlh_basic_setup(uint8_t i2c_addr)
 {
   Wire.beginTransmission(i2c_addr);
-  Wire.write((uint8_t)(CTRL_REG1 | AUTO_INCREMENT));
-  Wire.write((uint8_t)((1 << PM0_BIT) | (1 << Zen_BIT) | (1 << Yen_BIT) | (1 << Xen_BIT)));//all axes on, full data rate
+  Wire.write((uint8_t)(LIS302_CTRL_REG1 | LIS302_AUTO_INCREMENT));
+  Wire.write((uint8_t)((1 << LIS302_PM0) | (1 << LIS302_Zen) | (1 << LIS302_Yen) | (1 << LIS302_Xen)));//all axes on, full data rate
   Wire.write((uint8_t)0);//reg 2
   Wire.write((uint8_t)0);//reg 3
-  Wire.write((uint8_t)(1 << BDU));//block data update
+  Wire.write((uint8_t)(1 << LIS302_BDU));//block data update
   Wire.endTransmission();
   return 0;
 }
@@ -104,7 +104,7 @@ int lis320dlh_basic_setup(uint8_t i2c_addr)
 int lis320dlh_print_config(uint8_t i2c_addr)
 {
   Wire.beginTransmission(i2c_addr);
-  Wire.write((uint8_t)(CTRL_REG1 | AUTO_INCREMENT));//auto increment
+  Wire.write((uint8_t)(LIS302_CTRL_REG1 | LIS302_AUTO_INCREMENT));//auto increment
   Wire.endTransmission();
   Wire.requestFrom((uint8_t)i2c_addr, (uint8_t)5);
   Serial.print("LIS302DLH CTRL_REG1-5: ");
